@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+
+    <title>AS/REPL</title>
+
+    <link href="asrepl.css" rel="stylesheet" />
+    <link rel="icon" type="image/png" href="/favicon.png">
+</head>
+
+<body>
+    <div class="content">
+        <h1 class="title">AS/REPL</h1>
+        <div class="subtitle">A REPL-style (dis)assembler for the terminal and the web</div>
+        <pre id="output"></pre>
+        <input id="repl" type="text" value="" placeholder="Loading..." disabled="true" />
+
+        <div class="links">
+            AS/REPL is made by
+            <a href="https://twitter.com/jonpalmisc">@jonpalmisc</a>,
+            and the source code is available on
+            <a href="https://github.com/jonpalmisc/asrepl">GitHub</a>.
+        </div>
+    </div>
+
+    <script>
+        const inputField = document.getElementById("repl");
+        const outputField = document.getElementById("output");
+
+        inputField.addEventListener("keyup", event => {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                handleInput();
+            }
+        });
+
+        function handleInput() {
+            const input = inputField.value;
+            const result = Module.asreplSend(input);
+
+            outputField.innerText += "> " + input + "\n" + result + "\n";
+            outputField.scrollTop = outputField.scrollHeight;
+            inputField.value = "";
+        }
+
+        var Module = {
+            onRuntimeInitialized: function() {
+                Module.asreplInit();
+                inputField.placeholder = "Enter assembly or opcodes, /help for more info";
+                inputField.disabled = false;
+                outputField.innerText = Module.asreplWelcome();
+            }
+        };
+    </script>
+    <script src="asrepl-web.js"></script>
+</body>
+
+</html>
